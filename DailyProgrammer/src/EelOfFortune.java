@@ -39,13 +39,13 @@ import java.io.IOException;
  *  
  *  What are the 10 largest problem counts of any sequence of 5 letters ("aaaaa", "aaaab", " aaaac", 
  *  through "zzzzz")? A solution to this problem needs to finish in less than a year. Aim for a few 
- *  minutes, or an hour at most. Post your output along with your code.
+ *  minutes, or an hour at most.
  *  
  *  @author Jake Holden - jholden88@live.co.uk
  */
 public class EelOfFortune 
 {
-	private static final String TEXT_FILE = "C:\\enable1.txt";
+	private static final String TEXT_FILE = "txt/enable1.txt";
 	
 	public static void main(String[] args)
 	{
