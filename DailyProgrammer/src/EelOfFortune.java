@@ -2,6 +2,15 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 /**
  *  You work on the popular game show Eel of Fortune, where contestants take turns fishing live eels 
@@ -46,6 +55,12 @@ import java.io.IOException;
 public class EelOfFortune 
 {
 	private static final String TEXT_FILE = "txt/enable1.txt";
+	private static final List<String> cachedTextFile = new ArrayList<String>();
+	private static char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+	private static List<String> words = new ArrayList<String>();
+	private static Map<String, Integer> problemCountMap = new HashMap<String, Integer>();
+	private static ProblemCountComparator comparator = new ProblemCountComparator(problemCountMap);
+	private static Map<String, Integer> sortedProblemCountMap = new TreeMap<String, Integer>(comparator);
 	
 	public static void main(String[] args)
 	{
@@ -54,8 +69,21 @@ public class EelOfFortune
 		System.out.println(containsWord("mispronounced", "snond"));
 		System.out.println(containsWord("shotgunned", "snond"));
 		System.out.println(containsWord("snond", "snond"));
-		System.out.println(getProblemCount(TEXT_FILE, "snond"));
-		System.out.println(getProblemCount(TEXT_FILE, "rrizi"));
+		System.out.println(getProblemCountFromFile(TEXT_FILE, "snond"));
+		System.out.println(getProblemCountFromFile(TEXT_FILE, "rrizi"));
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.setLength(5);
+		generate(stringBuilder, 0);
+		System.out.println("Finished generating words");
+		sortedProblemCountMap.putAll(problemCountMap);
+		Set<Entry<String, Integer>> entrySet = sortedProblemCountMap.entrySet();
+		Iterator<Entry<String, Integer>> iterator = entrySet.iterator();
+		
+		for (int i = 0; i < 10; i++)
+		{
+			Entry<String, Integer> entry = iterator.next();
+			System.out.println("Word " + (i + 1) + " = " + entry.getKey() + ", Problem Count = " + entry.getValue());
+		}
 	}
 	
 	/**
@@ -64,51 +92,79 @@ public class EelOfFortune
 	 * @param word
 	 * @return
 	 */
-	public static int getProblemCount(String file, String word)
+	public static int getProblemCountFromFile(String file, String word)
 	{
 		int problemCount = 0;
 		BufferedReader reader = null;
+		System.out.println("Checking " + word);
 		
-		try 
+		if (cachedTextFile.size() == 0)
 		{
-			reader = new BufferedReader(new FileReader(file));
-			String line;
-			
-			while ((line = reader.readLine()) != null)
+			try 
 			{
-				if (line.length() >= word.length())
+				reader = new BufferedReader(new FileReader(file));
+				String line;
+				
+				while ((line = reader.readLine()) != null)
 				{
-					if (containsWord(line, word))
+					cachedTextFile.add(line);
+				}
+			} 
+			catch (FileNotFoundException e) 
+			{
+				e.printStackTrace();
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				if (reader != null)
+				{
+					try 
+					{
+						reader.close();
+					} 
+					catch (IOException e) 
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		for (String string : cachedTextFile)
+		{
+			if (string.length() < word.length())
+			{
+				if (string.contains("" + word.charAt(0)) && string.contains("" + word.charAt(1)))
+				{
+					if (containsWord(string, word))
 					{
 						problemCount++;
 					}
 				}
 			}
-		} 
-		catch (FileNotFoundException e) 
-		{
-			e.printStackTrace();
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			if (reader != null)
-			{
-				try 
-				{
-					reader.close();
-				} 
-				catch (IOException e) 
-				{
-					e.printStackTrace();
-				}
-			}
-		}
+		}		
 		
 		return problemCount;
+	}
+	
+	public static Map<String, Integer> getProblemCountMap()
+	{
+		Map<String, Integer> hashMap = new HashMap<String, Integer>();
+		ProblemCountComparator comparator = new ProblemCountComparator(hashMap);
+		Map<String, Integer> treeMap = new TreeMap<String, Integer>(comparator);
+		
+		for (String word : words)
+		{
+			int problemCount = getProblemCountFromFile(TEXT_FILE, word);
+			hashMap.put(word, problemCount);
+		}
+		
+		treeMap.putAll(hashMap);
+		return treeMap;
 	}
 	
 	/**
@@ -139,5 +195,47 @@ public class EelOfFortune
 		
 		// Return true if the string to check is equal to the word, false if otherwise.
 		return stringToCheck.equals(word);
+	}
+	
+	public static void generate(StringBuilder stringBuilder, int length)
+	{
+		if (length == stringBuilder.length())
+		{
+			words.add(stringBuilder.toString());
+			String string = stringBuilder.toString();
+			int problemCount = getProblemCountFromFile(TEXT_FILE, string);
+			problemCountMap.put(string, problemCount);
+			return;
+		}
+		
+		for (char letter : alphabet)
+		{
+			stringBuilder.setCharAt(length, letter);
+			generate(stringBuilder, length + 1);
+		}
+	}
+	
+	static class ProblemCountComparator implements Comparator<String>
+	{
+		Map<String, Integer> map;
+		
+		public ProblemCountComparator(Map<String, Integer> map)
+		{
+			this.map = map;
+		}
+		
+		public int compare(String string1, String string2) 
+		{
+			if (map.get(string1) >= map.get(string2))
+			{
+				return 1;
+			}
+			else
+			{
+				return -1;
+			}
+			// Returning 0 would merge keys.
+		}
+		
 	}
 }
