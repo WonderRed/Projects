@@ -5,10 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -55,14 +54,15 @@ import java.util.TreeMap;
 public class EelOfFortune 
 {
 	private static final String TEXT_FILE = "txt/enable1.txt";
-	private static final List<String> cachedTextFile = new ArrayList<String>();
+	private static List<String> cachedTextFile = null;
 	private static char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 	private static List<String> words = new ArrayList<String>();
 	private static Map<String, Integer> problemCountMap = new HashMap<String, Integer>();
 	private static ProblemCountComparator comparator = new ProblemCountComparator(problemCountMap);
 	private static Map<String, Integer> sortedProblemCountMap = new TreeMap<String, Integer>(comparator);
+	private static Set<String> textFilePermutations = new HashSet<String>();
 	
-	public static void main(String[] args)
+	public static void main(String[] args) throws InterruptedException
 	{
 		System.out.println(containsWord("synchronized", "snond"));
 		System.out.println(containsWord("misfunctioned", "snond"));
@@ -71,18 +71,17 @@ public class EelOfFortune
 		System.out.println(containsWord("snond", "snond"));
 		System.out.println(getProblemCountFromFile(TEXT_FILE, "snond"));
 		System.out.println(getProblemCountFromFile(TEXT_FILE, "rrizi"));
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.setLength(5);
-		generate(stringBuilder, 0);
-		System.out.println("Finished generating words");
-		sortedProblemCountMap.putAll(problemCountMap);
-		Set<Entry<String, Integer>> entrySet = sortedProblemCountMap.entrySet();
-		Iterator<Entry<String, Integer>> iterator = entrySet.iterator();
-		
-		for (int i = 0; i < 10; i++)
+		generateProblemWords(cachedTextFile, 5);
+		System.out.println("Generated problem words");
+		getAllProblemCount();
+	}
+	
+	public static void getAllProblemCount()
+	{
+		for (String string : textFilePermutations)
 		{
-			Entry<String, Integer> entry = iterator.next();
-			System.out.println("Word " + (i + 1) + " = " + entry.getKey() + ", Problem Count = " + entry.getValue());
+			int problemCount = getProblemCountFromFile(TEXT_FILE, string);
+			problemCountMap.put(string, problemCount);
 		}
 	}
 	
@@ -98,8 +97,10 @@ public class EelOfFortune
 		BufferedReader reader = null;
 		System.out.println("Checking " + word);
 		
-		if (cachedTextFile.size() == 0)
+		if (cachedTextFile == null)
 		{
+			cachedTextFile = new ArrayList<String>();
+			
 			try 
 			{
 				reader = new BufferedReader(new FileReader(file));
@@ -107,7 +108,10 @@ public class EelOfFortune
 				
 				while ((line = reader.readLine()) != null)
 				{
-					cachedTextFile.add(line);
+					if (line.length() >= 5)
+					{
+						cachedTextFile.add(line);
+					}
 				}
 			} 
 			catch (FileNotFoundException e) 
@@ -136,18 +140,20 @@ public class EelOfFortune
 		
 		for (String string : cachedTextFile)
 		{
-			if (string.length() < word.length())
+			if (string.contains("" + word.charAt(0)) && 
+					string.contains("" + word.charAt(1)) && 
+					string.contains("" + word.charAt(2)) && 
+					string.contains("" + word.charAt(3)) && 
+					string.contains("" + word.charAt(4)))
 			{
-				if (string.contains("" + word.charAt(0)) && string.contains("" + word.charAt(1)))
+				if (containsWord(string, word))
 				{
-					if (containsWord(string, word))
-					{
-						problemCount++;
-					}
+					problemCount++;
 				}
 			}
 		}		
 		
+		System.out.println("Problem count = " + problemCount);
 		return problemCount;
 	}
 	
@@ -195,6 +201,46 @@ public class EelOfFortune
 		
 		// Return true if the string to check is equal to the word, false if otherwise.
 		return stringToCheck.equals(word);
+	}
+	
+	public static void generateProblemWords(List<String> strings, int minimumLength) throws InterruptedException
+	{
+		for (String string : strings)
+		{			
+			if (string.length() >= minimumLength)
+			{
+				System.out.println("Generating all problem words of " + string);
+				Thread.sleep(10000);
+				generatePermutations(string);
+			}
+		}
+	}
+	
+	public static void generatePermutations(String string)
+	{
+		generatePermutations("", string, string.length(), 5);
+	}
+	
+	public static void generatePermutations(String prefix, String string, int n, int k)
+	{
+		// Base case: k is 0, print prefix
+        if (k == 0) 
+        {
+        	System.out.println(prefix);
+        	textFilePermutations.add(prefix);
+            return;
+        }
+ 
+        // One by one add all characters from set and recursively 
+        // call for k equals to k-1
+        for (int i = 0; i < n; ++i) 
+        {             
+            // Next character of input added
+            String newPrefix = prefix + string.charAt(i); 
+             
+            // k is decreased, because we have added a new character
+            generatePermutations(newPrefix, string, n, k - 1); 
+        }
 	}
 	
 	public static void generate(StringBuilder stringBuilder, int length)
