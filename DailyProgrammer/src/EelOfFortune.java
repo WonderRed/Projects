@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -71,17 +73,35 @@ public class EelOfFortune
 		System.out.println(containsWord("snond", "snond"));
 		System.out.println(getProblemCountFromFile(TEXT_FILE, "snond"));
 		System.out.println(getProblemCountFromFile(TEXT_FILE, "rrizi"));
-		generateProblemWords(cachedTextFile, 5);
+		
+		generateProblemWords(cachedTextFile);
+		
 		System.out.println("Generated problem words");
-		getAllProblemCount();
+		
+		getProblemCount();
+		
+		sortedProblemCountMap.putAll(problemCountMap);
+		
+		Iterator<Entry<String, Integer>> iterator = sortedProblemCountMap.entrySet().iterator();
+		
+		for (int i = 0; i < 10; i++)
+		{
+			Entry<String, Integer> entry = iterator.next();
+			
+			System.out.println("Word = " + entry.getKey() + " Count = " + entry.getValue());
+		}
 	}
 	
-	public static void getAllProblemCount()
+	public static void getProblemCount()
 	{
+		int count = textFilePermutations.size();
+		System.out.println("Count = " + count);
 		for (String string : textFilePermutations)
 		{
 			int problemCount = getProblemCountFromFile(TEXT_FILE, string);
 			problemCountMap.put(string, problemCount);
+			count--;
+			System.out.println("Count = " + count);
 		}
 	}
 	
@@ -203,17 +223,76 @@ public class EelOfFortune
 		return stringToCheck.equals(word);
 	}
 	
-	public static void generateProblemWords(List<String> strings, int minimumLength) throws InterruptedException
+	public static void generateProblemWords(List<String> strings)
 	{
 		for (String string : strings)
-		{			
-			if (string.length() >= minimumLength)
+		{	
+			if (string.length() == 5)
 			{
-				System.out.println("Generating all problem words of " + string);
-				Thread.sleep(10000);
-				generatePermutations(string);
+				textFilePermutations.add(string);
+			}
+			if (string.length() > 5)
+			{
+				generate(string);
 			}
 		}
+	}
+	
+	public static void generate(String string)
+	{		
+		System.out.println("Generating permutations for " + string);
+		
+		for (int i = 0; i < string.length() - 4; i++)
+		{
+			if (!containsSameCharacter(string.charAt(i), string.substring(0, i)) || i == 0)
+			{
+				for (int j = i + 1; j < string.length() - 3; j++)
+				{
+					if (!containsSameCharacter(string.charAt(j), string.substring(i + 1, j)) || j == i + 1)
+					{
+						for (int k = j + 1; k < string.length() - 2; k++)
+						{
+							if (!containsSameCharacter(string.charAt(k), string.substring(j + 1, k)) || k == j + 1)
+							{
+								for (int l = k + 1; l < string.length() - 1; l++)
+								{
+									if (!containsSameCharacter(string.charAt(l), string.substring(k + 1, l)) || l == k + 1)
+									{
+										for (int m = l + 1; m < string.length(); m++)
+										{
+											String problemWord = "";
+											problemWord += string.charAt(i);
+											problemWord += string.charAt(j);
+											problemWord += string.charAt(k);
+											problemWord += string.charAt(l);
+											problemWord += string.charAt(m);
+											
+											if (containsWord(string, problemWord))
+											{
+												textFilePermutations.add(problemWord);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public static boolean containsSameCharacter(char character, String string)
+	{
+		for (int i = 0; i < string.length(); i++)
+		{
+			if (character == string.charAt(i))
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public static void generatePermutations(String string)
