@@ -252,18 +252,18 @@ public class EelOfFortune
 												// m starts at the fifth character of the string.
 												for (int m = l + 1; m < string.length(); m++)
 												{
-												    String word = "";
-												    word += (string.charAt(i));
-												    word += (string.charAt(j));
-												    word += (string.charAt(k));
-												    word += (string.charAt(l));
-												    word += (string.charAt(m));
-												    
-												    // Ensure the word created is offensive.
-												    if (containsOffensiveWord(string, word))
-												    {
-												        temp.add(word);
-												    }
+													String word = "";
+													word += (string.charAt(i));
+													word += (string.charAt(j));
+													word += (string.charAt(k));
+													word += (string.charAt(l));
+													word += (string.charAt(m));
+													
+													// Ensure the word created is offensive.
+													if (containsOffensiveWord(string, word))
+													{
+													    temp.add(word);
+													}
 												}
 											}
 										}
@@ -281,12 +281,12 @@ public class EelOfFortune
 			{
 				if (problemWords.containsKey(str))
 				{
-				    int newVal = problemWords.get(str) + 1;
-				    problemWords.put(str, newVal);
+					int newVal = problemWords.get(str) + 1;
+					problemWords.put(str, newVal);
 				}
 				else
 				{
-				    problemWords.put(str, 1);
+					problemWords.put(str, 1);
 				}
 			}
 		}
