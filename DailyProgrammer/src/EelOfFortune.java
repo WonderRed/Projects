@@ -5,12 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -57,141 +55,105 @@ public class EelOfFortune
 {
 	private static final String TEXT_FILE = "txt/enable1.txt";
 	private static List<String> cachedTextFile = null;
-	private static char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-	private static List<String> words = new ArrayList<String>();
-	private static Map<String, Integer> problemCountMap = new HashMap<String, Integer>();
-	private static ProblemCountComparator comparator = new ProblemCountComparator(problemCountMap);
-	private static Map<String, Integer> sortedProblemCountMap = new TreeMap<String, Integer>(comparator);
-	private static Set<String> textFilePermutations = new HashSet<String>();
+	private static Map<String, Integer> problemWords = new HashMap<String, Integer>();
+	private static ProblemCountComparator comparator = new ProblemCountComparator(problemWords);
+	private static Map<String, Integer> sortedProblemWords = new TreeMap<String, Integer>(comparator);
 	
 	public static void main(String[] args) throws InterruptedException
 	{
-		System.out.println(containsWord("synchronized", "snond"));
-		System.out.println(containsWord("misfunctioned", "snond"));
-		System.out.println(containsWord("mispronounced", "snond"));
-		System.out.println(containsWord("shotgunned", "snond"));
-		System.out.println(containsWord("snond", "snond"));
-		System.out.println(getProblemCountFromFile(TEXT_FILE, "snond"));
-		System.out.println(getProblemCountFromFile(TEXT_FILE, "rrizi"));
+		// Get the start time so we can keep track how long each problem takes.
+		long startTime = System.currentTimeMillis();
 		
-		generateProblemWords(cachedTextFile);
+		// Turn the text file into a list of strings.
+		cacheTextFile(TEXT_FILE);
 		
-		System.out.println("Generated problem words");
+		long endTime = System.currentTimeMillis();
+		System.out.println("Cached text file in " + (endTime - startTime) + "ms");
 		
-		getProblemCount();
+		System.out.println("\nMain problem:");
+		System.out.println("containsOffensiveWord(\"synchronized\", \"snond\") = " + containsOffensiveWord("synchronized", "snond"));
+		System.out.println("containsOffensiveWord(\"misfunctioned\", \"snond\") = " + containsOffensiveWord("misfunctioned", "snond"));
+		System.out.println("containsOffensiveWord(\"mispronounced\", \"snond\") = " + containsOffensiveWord("mispronounced", "snond"));
+		System.out.println("containsOffensiveWord(\"shotgunned\", \"snond\") = " + containsOffensiveWord("shotgunned", "snond"));
+		System.out.println("containsOffensiveWord(\"snond\", \"snond\") = " + containsOffensiveWord("snond", "snond"));
+
+		startTime = endTime;
+		endTime = System.currentTimeMillis();
+		System.out.println("Completed main problem in " + (endTime - startTime) + "ms");
 		
-		sortedProblemCountMap.putAll(problemCountMap);
+		System.out.println("\nOptional problem 1:");
+		System.out.println("Problem count for rrizi = " + getProblemCount("rrizi"));
 		
-		Iterator<Entry<String, Integer>> iterator = sortedProblemCountMap.entrySet().iterator();
+		startTime = endTime;
+		endTime = System.currentTimeMillis();
+		System.out.println("Completed optional problem 1 in " + (endTime - startTime) + "ms");
+		
+		System.out.println("\nOption problem 2:");
+		generateProblemWords();
+		System.out.println("Problem words generated, size = " + problemWords.size());
+		System.out.println("Sorting problem words to get top 10");
+		sortedProblemWords.putAll(problemWords);
+		Iterator<Entry<String, Integer>> iterator = sortedProblemWords.entrySet().iterator();
 		
 		for (int i = 0; i < 10; i++)
 		{
 			Entry<String, Integer> entry = iterator.next();
-			
-			System.out.println("Word = " + entry.getKey() + " Count = " + entry.getValue());
+			System.out.println("#" + (i + 1) + " " + entry.getKey() + " problem count = " + entry.getValue());
 		}
-	}
-	
-	public static void getProblemCount()
-	{
-		int count = textFilePermutations.size();
-		System.out.println("Count = " + count);
-		for (String string : textFilePermutations)
-		{
-			int problemCount = getProblemCountFromFile(TEXT_FILE, string);
-			problemCountMap.put(string, problemCount);
-			count--;
-			System.out.println("Count = " + count);
-		}
+		
+		startTime = endTime;
+		endTime = System.currentTimeMillis();
+		System.out.println("Completed optional problem 2 in " + (endTime - startTime) + "ms");
+		
 	}
 	
 	/**
-	 * 
-	 * @param file
-	 * @param word
-	 * @return
+	 * Covert the text file into a list of strings.
+	 * @param file  The file path.
 	 */
-	public static int getProblemCountFromFile(String file, String word)
+	public static void cacheTextFile(String file)
 	{
-		int problemCount = 0;
+		cachedTextFile = new ArrayList<String>();
 		BufferedReader reader = null;
-		System.out.println("Checking " + word);
 		
-		if (cachedTextFile == null)
+		try 
 		{
-			cachedTextFile = new ArrayList<String>();
+			reader = new BufferedReader(new FileReader(file));
+			String line;
 			
-			try 
+			while ((line = reader.readLine()) != null)
 			{
-				reader = new BufferedReader(new FileReader(file));
-				String line;
-				
-				while ((line = reader.readLine()) != null)
+				if (line.length() >= 5)
 				{
-					if (line.length() >= 5)
-					{
-						cachedTextFile.add(line);
-					}
+					cachedTextFile.add(line);
 				}
-			} 
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			} 
-			catch (IOException e) 
-			{
-				e.printStackTrace();
 			}
-			finally
+		} 
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (reader != null)
 			{
-				if (reader != null)
+				try 
 				{
-					try 
-					{
-						reader.close();
-					} 
-					catch (IOException e) 
-					{
-						e.printStackTrace();
-					}
+					reader.close();
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
 				}
 			}
 		}
-		
-		for (String string : cachedTextFile)
-		{
-			if (string.contains("" + word.charAt(0)) && 
-					string.contains("" + word.charAt(1)) && 
-					string.contains("" + word.charAt(2)) && 
-					string.contains("" + word.charAt(3)) && 
-					string.contains("" + word.charAt(4)))
-			{
-				if (containsWord(string, word))
-				{
-					problemCount++;
-				}
-			}
-		}		
-		
-		System.out.println("Problem count = " + problemCount);
-		return problemCount;
 	}
 	
-	public static Map<String, Integer> getProblemCountMap()
-	{
-		Map<String, Integer> hashMap = new HashMap<String, Integer>();
-		ProblemCountComparator comparator = new ProblemCountComparator(hashMap);
-		Map<String, Integer> treeMap = new TreeMap<String, Integer>(comparator);
-		
-		for (String word : words)
-		{
-			int problemCount = getProblemCountFromFile(TEXT_FILE, word);
-			hashMap.put(word, problemCount);
-		}
-		
-		treeMap.putAll(hashMap);
-		return treeMap;
-	}
+
 	
 	/**
 	 * Check if a string contains another string regardless of the index of the characters.
@@ -203,8 +165,15 @@ public class EelOfFortune
 	 * @param word - The string being checked for.
 	 * @return True if the string to check contains the word, false if otherwise.
 	 */
-	public static boolean containsWord(String stringToCheck, String word)
-	{		
+	public static boolean containsOffensiveWord(String stringToCheck, String word)
+	{	
+		// If the string to check is smaller than the word being checked for there
+		// is no need to continue so return false.
+		if (stringToCheck.length() < word.length())
+		{
+			return false;
+		}
+		
 		// Convert the word to a char array.
 		char[] chars = word.toCharArray();
 				
@@ -223,121 +192,25 @@ public class EelOfFortune
 		return stringToCheck.equals(word);
 	}
 	
-	public static void generateProblemWords(List<String> strings)
+	/**
+	 * Get the problem count of the word by iterating through the cached text file. 
+	 * @param word  
+	 * @return  The problem count of the word.
+	 */
+	public static int getProblemCount(String word)
 	{
-		for (String string : strings)
-		{	
-			if (string.length() == 5)
-			{
-				textFilePermutations.add(string);
-			}
-			if (string.length() > 5)
-			{
-				generate(string);
-			}
-		}
-	}
-	
-	public static void generate(String string)
-	{		
-		System.out.println("Generating permutations for " + string);
+		System.out.println("Getting problem count for " + word);
+		int problemCount = 0;
 		
-		for (int i = 0; i < string.length() - 4; i++)
+		for (String string : cachedTextFile)
 		{
-			if (!containsSameCharacter(string.charAt(i), string.substring(0, i)) || i == 0)
+			if (containsOffensiveWord(string, word))
 			{
-				for (int j = i + 1; j < string.length() - 3; j++)
-				{
-					if (!containsSameCharacter(string.charAt(j), string.substring(i + 1, j)) || j == i + 1)
-					{
-						for (int k = j + 1; k < string.length() - 2; k++)
-						{
-							if (!containsSameCharacter(string.charAt(k), string.substring(j + 1, k)) || k == j + 1)
-							{
-								for (int l = k + 1; l < string.length() - 1; l++)
-								{
-									if (!containsSameCharacter(string.charAt(l), string.substring(k + 1, l)) || l == k + 1)
-									{
-										for (int m = l + 1; m < string.length(); m++)
-										{
-											String problemWord = "";
-											problemWord += string.charAt(i);
-											problemWord += string.charAt(j);
-											problemWord += string.charAt(k);
-											problemWord += string.charAt(l);
-											problemWord += string.charAt(m);
-											
-											if (containsWord(string, problemWord))
-											{
-												textFilePermutations.add(problemWord);
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+				problemCount++;
 			}
-		}
-	}
-	
-	public static boolean containsSameCharacter(char character, String string)
-	{
-		for (int i = 0; i < string.length(); i++)
-		{
-			if (character == string.charAt(i))
-			{
-				return true;
-			}
-		}
+		}		
 		
-		return false;
-	}
-	
-	public static void generatePermutations(String string)
-	{
-		generatePermutations("", string, string.length(), 5);
-	}
-	
-	public static void generatePermutations(String prefix, String string, int n, int k)
-	{
-		// Base case: k is 0, print prefix
-        if (k == 0) 
-        {
-        	System.out.println(prefix);
-        	textFilePermutations.add(prefix);
-            return;
-        }
- 
-        // One by one add all characters from set and recursively 
-        // call for k equals to k-1
-        for (int i = 0; i < n; ++i) 
-        {             
-            // Next character of input added
-            String newPrefix = prefix + string.charAt(i); 
-             
-            // k is decreased, because we have added a new character
-            generatePermutations(newPrefix, string, n, k - 1); 
-        }
-	}
-	
-	public static void generate(StringBuilder stringBuilder, int length)
-	{
-		if (length == stringBuilder.length())
-		{
-			words.add(stringBuilder.toString());
-			String string = stringBuilder.toString();
-			int problemCount = getProblemCountFromFile(TEXT_FILE, string);
-			problemCountMap.put(string, problemCount);
-			return;
-		}
-		
-		for (char letter : alphabet)
-		{
-			stringBuilder.setCharAt(length, letter);
-			generate(stringBuilder, length + 1);
-		}
+		return problemCount;
 	}
 	
 	static class ProblemCountComparator implements Comparator<String>
@@ -351,7 +224,7 @@ public class EelOfFortune
 		
 		public int compare(String string1, String string2) 
 		{
-			if (map.get(string1) >= map.get(string2))
+			if (map.get(string1) <= map.get(string2))
 			{
 				return 1;
 			}
@@ -360,7 +233,89 @@ public class EelOfFortune
 				return -1;
 			}
 			// Returning 0 would merge keys.
+		}		
+	}
+	
+	public static void generateProblemWords()
+	{
+		for (String string : cachedTextFile)
+		{
+			List<String> temp = new ArrayList<String>();
+			
+			if (string.length() == 5)
+			{
+				temp.add(string);
+			}
+			else if (string.length() > 5)
+			{
+				for (int v = 0; v < string.length() - 4; v++)
+                {
+                    if (!string.substring(0, v).contains("" + string.charAt(v)) || v == 0)
+                    {
+	                    for (int w = v + 1; w < string.length() - 3; w++)
+	                    {
+	                        if (!string.substring(v + 1, w).contains("" + string.charAt(w)) || w == v + 1)
+	                        {
+		                        for (int x = w + 1; x < string.length() - 2; x++)
+		                        {
+		                            if (!string.substring(w + 1, x).contains("" + string.charAt(x)) || x == w + 1)
+		                            {
+			                            for (int y = x + 1; y < string.length() -1; y++)
+			                            {
+			                                if (!string.substring(x + 1, y).contains("" + string.charAt(y)) || y == x + 1)
+			                                {
+				                                for (int z = y + 1; z < string.length(); z++)
+				                                {
+				                                    String phrase = "";
+				                                    phrase += (string.charAt(v));
+				                                    phrase += (string.charAt(w));
+				                                    phrase += (string.charAt(x));
+				                                    phrase += (string.charAt(y));
+				                                    phrase += (string.charAt(z));
+				                                    
+				                                    if (containsOffensiveWord(string, phrase))
+				                                    {
+				                                        temp.add(phrase);
+				                                    }
+				                                }
+			                                }
+			                            }
+		                            }
+		                        }
+	                        }
+	                    }
+                    }
+                }
+			}
+			
+			for (int i = 0; i < temp.size(); i++)
+            {
+                boolean anotherFound = false;
+                
+                if (i != 0)
+                { 
+                    for (int j = i - 1; j >= 0; j--)
+                    {
+                        if (temp.get(j).equals(temp.get(i)))
+                        {
+                            anotherFound = true;
+                        }
+                    }
+                }
+                
+                if (!anotherFound)
+                {
+                    if (problemWords.containsKey(temp.get(i)))
+                    {
+                        int newVal = problemWords.get(temp.get(i)) + 1;
+                        problemWords.put(temp.get(i), newVal);
+                    }
+                    else
+                    {
+                        problemWords.put(temp.get(i), 1);
+                    }
+                }
+            }
 		}
-		
 	}
 }
