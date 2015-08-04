@@ -231,20 +231,20 @@ public class EelOfFortune
 			{
 				// i starts at the first character of the string.
 				for (int i = 0; i < string.length() - 4; i++)
-                {
-                    if (!string.substring(0, i).contains("" + string.charAt(i)) || i == 0)
-                    {
-                    	// j starts at the second character of the string.
-	                    for (int j = i + 1; j < string.length() - 3; j++)
-	                    {
-	                        if (!string.substring(i + 1, j).contains("" + string.charAt(j)) || j == i + 1)
-	                        {
-	                        	// k starts at the third character of the string.
-		                        for (int k = j + 1; k < string.length() - 2; k++)
-		                        {
-		                            if (!string.substring(j + 1, k).contains("" + string.charAt(k)) || k == j + 1)
-		                            {
-		                            	// l starts at the fourth character of the string.
+			    {
+			        if (!string.substring(0, i).contains("" + string.charAt(i)) || i == 0)
+			        {
+			        	// j starts at the second character of the string.
+			            for (int j = i + 1; j < string.length() - 3; j++)
+			            {
+			                if (!string.substring(i + 1, j).contains("" + string.charAt(j)) || j == i + 1)
+			                {
+			                	// k starts at the third character of the string.
+			                    for (int k = j + 1; k < string.length() - 2; k++)
+			                    {
+			                        if (!string.substring(j + 1, k).contains("" + string.charAt(k)) || k == j + 1)
+			                        {
+			                        	// l starts at the fourth character of the string.
 			                            for (int l = k + 1; l < string.length() -1; l++)
 			                            {
 			                                if (!string.substring(k + 1, l).contains("" + string.charAt(l)) || l == k + 1)
@@ -267,12 +267,12 @@ public class EelOfFortune
 				                                }
 			                                }
 			                            }
-		                            }
-		                        }
-	                        }
-	                    }
-                    }
-                }
+			                        }
+			                    }
+			                }
+			            }
+			        }
+			    }
 			}
 			
 			// Loop through the set of problem words, if the problem words map already contains
@@ -280,14 +280,14 @@ public class EelOfFortune
 			for (String str : temp)
 			{
 				if (problemWords.containsKey(str))
-                {
-                    int newVal = problemWords.get(str) + 1;
-                    problemWords.put(str, newVal);
-                }
-                else
-                {
-                    problemWords.put(str, 1);
-                }
+			    {
+			        int newVal = problemWords.get(str) + 1;
+			        problemWords.put(str, newVal);
+			    }
+			    else
+			    {
+			        problemWords.put(str, 1);
+			    }
 			}
 		}
 	}
