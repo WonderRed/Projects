@@ -240,8 +240,8 @@ public class EelOfFortune
 							if (!string.substring(i + 1, j).contains("" + string.charAt(j)) || j == i + 1)
 							{
 								// k starts at the third character of the string.
-							    for (int k = j + 1; k < string.length() - 2; k++)
-							    {
+								for (int k = j + 1; k < string.length() - 2; k++)
+								{
 									if (!string.substring(j + 1, k).contains("" + string.charAt(k)) || k == j + 1)
 									{
 										// l starts at the fourth character of the string.
@@ -268,7 +268,7 @@ public class EelOfFortune
 											}
 										}
 									}
-							    }
+								}
 							}
 						}
 					}
