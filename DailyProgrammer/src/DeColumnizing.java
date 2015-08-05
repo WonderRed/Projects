@@ -1,3 +1,8 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 
 /**
  * ====================================================================
@@ -199,8 +204,77 @@
  */
 public class DeColumnizing 
 {
+	private static final String EXAMPLE_1 = "txt/decolumnizing/Example1.txt";
+	private static final String EXAMPLE_2 = "txt/decolumnizing/Example2.txt";
+	private static final String EXAMPLE_3 = "txt/decolumnizing/Example3.txt";
+	
 	public static void main(String[] args)
 	{
+		readFile(EXAMPLE_1);
+		readFile(EXAMPLE_2);
+		readFile(EXAMPLE_3);
+	}
+	
+	private static void readFile(String file)
+	{
+		BufferedReader reader = null;
 		
+		try 
+		{
+			// Read the file.
+			reader = new BufferedReader(new FileReader(file));
+			// Read the first line, this is the total lines to read.
+			String firstLine = reader.readLine();
+			int totalLines = 0;
+			
+			if (firstLine != null)
+			{
+				try
+				{
+					totalLines = Integer.parseInt(firstLine);
+				}
+				catch (NumberFormatException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			
+			if (totalLines > 0)
+			{		
+				int count = 1;
+				
+				while (count < totalLines)
+				{
+					String line = reader.readLine();
+					
+					if (line != null)
+					{
+						
+					}
+				}
+			}
+		} 
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (reader != null)
+			{
+				try 
+				{
+					reader.close();
+				} 
+				catch (IOException e) 
+				{
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

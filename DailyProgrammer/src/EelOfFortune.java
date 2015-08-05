@@ -58,7 +58,7 @@ import java.util.TreeMap;
  */
 public class EelOfFortune 
 {
-	private static final String TEXT_FILE = "txt/enable1.txt";
+	private static final String TEXT_FILE = "txt/eeloffortune/enable1.txt";
 	private static List<String> cachedTextFile = new ArrayList<String>();
 	private static Map<String, Integer> problemWords = new HashMap<String, Integer>();
 	private static ProblemCountComparator comparator = new ProblemCountComparator(problemWords);
