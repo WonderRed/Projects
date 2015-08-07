@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -208,15 +209,20 @@ import java.util.Map.Entry;
  * 
  * @author Jake Holden - jholden88@live.co.uk
  */
-public class DeColumnizing 
+public class DeColumnizing extends DailyProgrammer
 {
 	private static final String EXAMPLE_1 = "txt/decolumnizing/Example1.txt";
 	private static final String EXAMPLE_2 = "txt/decolumnizing/Example2.txt";
 	private static final String EXAMPLE_3 = "txt/decolumnizing/Example3.txt";
 	
-	public static void main(String[] args)
+	public void solve()
 	{
-		readFile(EXAMPLE_1);
+		System.out.println("Output 1:\n");
+		readFile(EXAMPLE_1);	
+		System.out.println("\nOutput 2:\n");	
+		readFile(EXAMPLE_2);
+		System.out.println("\nOutput 3:\n");
+		readFile(EXAMPLE_3);
 	}
 	
 	private static void readFile(String file)
@@ -249,6 +255,7 @@ public class DeColumnizing
 				Map<Integer, String> hyphenatedWords = new HashMap<Integer, String>();
 				
 				int count = 1;
+				List<String> featuredText = new ArrayList<String>();
 				
 				while (count <= totalLines)
 				{
@@ -256,9 +263,44 @@ public class DeColumnizing
 					
 					if (line != null)
 					{
+						if (!line.matches("^.*[^a-zA-Z0-9 ].*$"))
+						{
+							StringBuilder textToAdd = new StringBuilder();
+							Iterator<String> it = featuredText.iterator();
+							textToAdd.append("(");
+							
+							while (it.hasNext())
+							{
+								textToAdd.append(it.next());
+								
+								if (it.hasNext())
+								{
+									textToAdd.append(" ");
+								}
+							}
+							
+							textToAdd.append(")");
+
+							String text = output.get(0);
+							text = textToAdd.toString() + text;
+							output.set(0, text);
+						}
+						
 						if (line.endsWith("-"))
 						{
 							hyphenatedWords.put(count, line.substring(line.lastIndexOf(" "), line.length() - 1));
+						}
+						
+						if (line.startsWith("|") || line.endsWith("|"))
+						{
+							String featuredLine = line.substring(line.indexOf("|"), line.lastIndexOf("|"));
+							featuredLine = featuredLine.replaceAll("[^A-Za-z0-9() ]", "");
+							featuredLine = featuredLine.trim();
+							
+							if (!featuredLine.equals(""))
+							{
+								featuredText.add(featuredLine);
+							}
 						}
 						
 						output.add(readLine(line));

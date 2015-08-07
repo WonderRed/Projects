@@ -56,15 +56,15 @@ import java.util.TreeMap;
  * 
  * @author Jake Holden - jholden88@live.co.uk
  */
-public class EelOfFortune 
+public class EelOfFortune extends DailyProgrammer
 {
-	private static final String TEXT_FILE = "txt/eeloffortune/enable1.txt";
-	private static List<String> cachedTextFile = new ArrayList<String>();
-	private static Map<String, Integer> problemWords = new HashMap<String, Integer>();
-	private static ProblemCountComparator comparator = new ProblemCountComparator(problemWords);
-	private static Map<String, Integer> sortedProblemWords = new TreeMap<String, Integer>(comparator);
+	private final String TEXT_FILE = "txt/eeloffortune/enable1.txt";
+	private List<String> cachedTextFile = new ArrayList<String>();
+	private Map<String, Integer> problemWords = new HashMap<String, Integer>();
+	private ProblemCountComparator comparator = new ProblemCountComparator(problemWords);
+	private Map<String, Integer> sortedProblemWords = new TreeMap<String, Integer>(comparator);
 	
-	public static void main(String[] args)
+	public void solve() 
 	{
 		// Keep track how long each problem takes by using start time and end time.
 		long startTime = System.currentTimeMillis();		
@@ -112,7 +112,7 @@ public class EelOfFortune
 	 * Convert the text file into a list of strings.
 	 * @param file  The file path.
 	 */
-	public static void cacheTextFile(String file)
+	public void cacheTextFile(String file)
 	{
 		BufferedReader reader = null;
 		
@@ -165,7 +165,7 @@ public class EelOfFortune
 	 * @param word - The string being checked for.
 	 * @return True if the string to check contains the word, false if otherwise.
 	 */
-	public static boolean containsOffensiveWord(String stringToCheck, String word)
+	public boolean containsOffensiveWord(String stringToCheck, String word)
 	{	
 		// If the string to check is smaller than the word being checked for there
 		// is no need to continue so return false.
@@ -197,7 +197,7 @@ public class EelOfFortune
 	 * @param word  The word used to get the problem count.
 	 * @return  The problem count.
 	 */
-	public static int getProblemCount(String word)
+	public int getProblemCount(String word)
 	{
 		int problemCount = 0;
 		
@@ -215,7 +215,7 @@ public class EelOfFortune
 	/**
 	 * Generate all the possible problem words and problem counts from the cached text file.
 	 */
-	public static void generateProblemWords()
+	public void generateProblemWords()
 	{
 		// Loop through all the strings in the cached text file.
 		for (String string : cachedTextFile)
@@ -297,7 +297,7 @@ public class EelOfFortune
 	/**
 	 * Comparator to sort the problem words map by value highest to lowest.
 	 */
-	static class ProblemCountComparator implements Comparator<String>
+	class ProblemCountComparator implements Comparator<String>
 	{
 		Map<String, Integer> map;
 		
