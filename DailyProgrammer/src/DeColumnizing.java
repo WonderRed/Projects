@@ -2,6 +2,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 
 /**
@@ -90,6 +95,7 @@ import java.io.IOException;
  * piece of text. This is a sample for a challenge. Lorum ipsum dolor sit amet and other words. The proper word for a layout 
  * like this would be typesetting, or so I would imagine, but for now let's carry on calling it an example piece of text. Hold 
  * up - the end of the paragraph is approaching - notice the double line break for a paragraph.
+ * 
  * And so begins the start of the second paragraph but as you can see it's only marginally better than the other one so you've 
  * not really gained much - sorry. I am certainly not a budding author as you can see from this example input. Perhaps I need 
  * to work on my writing skills.
@@ -211,8 +217,6 @@ public class DeColumnizing
 	public static void main(String[] args)
 	{
 		readFile(EXAMPLE_1);
-		readFile(EXAMPLE_2);
-		readFile(EXAMPLE_3);
 	}
 	
 	private static void readFile(String file)
@@ -241,16 +245,58 @@ public class DeColumnizing
 			
 			if (totalLines > 0)
 			{		
+				List<String> output = new ArrayList<String>();
+				Map<Integer, String> hyphenatedWords = new HashMap<Integer, String>();
+				
 				int count = 1;
 				
-				while (count < totalLines)
+				while (count <= totalLines)
 				{
 					String line = reader.readLine();
 					
 					if (line != null)
 					{
+						if (line.endsWith("-"))
+						{
+							hyphenatedWords.put(count, line.substring(line.lastIndexOf(" "), line.length() - 1));
+						}
 						
+						output.add(readLine(line));
 					}
+					count++;
+				}
+								
+				for (Entry<Integer, String> entry : hyphenatedWords.entrySet())
+				{
+					int lineNumber = entry.getKey();
+					String hyphenatedWordStart = entry.getValue();
+					
+					String line = output.get(lineNumber - 1);
+					String line2 = output.get(lineNumber);
+
+					int endIndex = line2.indexOf(" ") == -1 ? line2.length() : line2.indexOf(" ");
+					String hyphenatedWordEnd = line2.substring(0, endIndex);
+					String hyphenatedWord = hyphenatedWordStart + hyphenatedWordEnd;
+					
+					line = line.substring(0, line.lastIndexOf(" "));
+					line = line + hyphenatedWord;
+					
+					line2 = line2.substring(endIndex);
+					
+					output.set(lineNumber - 1, line);
+					if (line2.equals(""))
+					{
+						output.remove(lineNumber);
+					}
+					else
+					{
+						output.set(lineNumber, line2);
+					}
+				}
+				
+				for (String string : output)
+				{
+					System.out.println(string);
 				}
 			}
 		} 
@@ -277,4 +323,26 @@ public class DeColumnizing
 			}
 		}
 	}
+	
+	private static String readLine(String line)
+	{				
+		if (line.contains("|"))
+		{
+			if (line.startsWith("|"))
+			{
+				line = line.substring(line.lastIndexOf("|") + 1);
+			}
+			
+			if (line.endsWith("|"))
+			{
+				line = line.substring(0, line.indexOf("|"));
+			}
+		}
+		
+		line = line.replaceAll("[^A-Za-z0-9., ]", "");
+		line = line.trim();
+		
+		return line;
+	}
 }
+
