@@ -15,7 +15,7 @@ public abstract class DailyProgrammer
 	public static void main(String[] args)
 	{
 		// Construct a subclass.
-		DailyProgrammer dailyProgrammer = new DeColumnizing();
+		DailyProgrammer dailyProgrammer = new ConsonantsAndVowels();
 		// Solve the problem.
 		dailyProgrammer.solve();
 	}
