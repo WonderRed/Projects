@@ -7,7 +7,7 @@
  * - If the number is divisible by 3, divide it by 3. 
  * - If it's not, either add 1 or subtract 1 (to make it divisible by 3), then divide it by 3.
  * 
- * Challenge Description:
+ * Description:
  * 
  * The input is a single number: the number at which the game starts. Write a program that plays 
  * the Threes game, and outputs a valid sequence of steps you need to take to get to 1. Each step 
