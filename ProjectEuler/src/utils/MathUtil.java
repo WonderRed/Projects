@@ -71,7 +71,7 @@ public class MathUtil
 	 * @param n
 	 * @return True if the n is prime, false if otherwise.
 	 */
-	public static boolean isPrime(long n )
+	public static boolean isPrime(long n)
 	{					
 		if (n > 3)
 		{
@@ -90,5 +90,37 @@ public class MathUtil
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * Check if a number is palindromic.
+	 * 
+	 * @param n
+	 * @return True if the number is palindromic, false if otherwise.
+	 */
+	public static boolean isPalindromic(long n)
+	{
+		String number = Long.toString(n);
+		
+		if (isEven(number.length()))
+		{
+			String firstPart = number.substring(0, number.length() / 2);
+			String secondPart = number.substring(number.length() / 2, number.length());
+			secondPart = new StringBuilder(secondPart).reverse().toString();
+			if (firstPart.equals(secondPart))
+			{
+				return true;
+			}
+		}
+		else
+		{
+			String reverseNumber = new StringBuilder(number).reverse().toString();
+			if (number.equals(reverseNumber))
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
