@@ -51,11 +51,14 @@ public class MathUtil
 	{
 		long largestPrimeFactor = 0;
 		
-		for (int i = 4; i < n / 2; i++)
+		for (long i = 3; i <= (long) Math.sqrt(n); i += 2)
 		{
 			if (isPrime(i))
 			{
-				largestPrimeFactor = i;
+				if (n % i == 0)
+				{
+					largestPrimeFactor = i;
+				}				
 			}
 		}
 		
@@ -68,11 +71,16 @@ public class MathUtil
 	 * @param n
 	 * @return True if the n is prime, false if otherwise.
 	 */
-	public static boolean isPrime(int n)
-	{		
+	public static boolean isPrime(long n )
+	{					
 		if (n > 3)
 		{
-			for (int i = 3; i < n; i += 2)
+			if (n % 2 == 0)
+			{
+				return false;
+			}
+			
+			for (long i = 3; i < (long) Math.sqrt(n); i += 2)
 			{
 				if (n % i == 0)
 				{
