@@ -18,7 +18,7 @@ public class Problem1 extends Problem
 		System.out.println("The sum of all multiples of 3 or 5 below 1000 is " + sumOfAllMultiples(999, 3, 5));
 	}
 	
-	public long sumOfAllMultiples(int maximum, int factor1, int factor2)
+	private long sumOfAllMultiples(int maximum, int factor1, int factor2)
 	{
 		long sum = 0;
 		
