@@ -58,19 +58,35 @@ public class RandomBagSystem extends DailyProgrammer
 		{
 			if (tempPieces.size() == 0)
 			{
-				tempPieces = getPiecesAsList();
-				tempOutput = "";
-				output += tempOutput;
+				if (validatePieces(tempOutput))
+				{
+					System.out.println("Generated pieces are valid adding to existing output string.");
+					output += tempOutput;
+					tempPieces = getPiecesAsList();
+					tempOutput = "";
+				}
+				else
+				{
+					System.out.println("Generated pieces are not valid.");
+				}
 			}
 			
 			int n = rand.nextInt(tempPieces.size());
 			char c = tempPieces.remove(n);
 			tempOutput += c;
-			output += c;
 			numberOfPieces -= 1;
 		}
 		
-		output += tempOutput;		
+		if (validatePieces(tempOutput))
+		{
+			System.out.println("Generated pieces are valid adding to existing output string.");
+			output += tempOutput;
+		}
+		else
+		{
+			System.out.println("Generated pieces are not valid.");
+		}
+		
 		System.out.println("Output: " + output);
 	}
 	
@@ -86,11 +102,12 @@ public class RandomBagSystem extends DailyProgrammer
 	
 	private boolean validatePieces(String pieces)
 	{
+		System.out.println("Validating " + pieces);
 		Set<Character> set = new HashSet<Character>();
 		for (char c : pieces.toCharArray())
 		{
 			set.add(c);
 		}
-		return set.size() == 7;
+		return set.size() == pieces.length();
 	}
 }
