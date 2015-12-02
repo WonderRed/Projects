@@ -123,4 +123,15 @@ public class MathUtil
 		
 		return false;
 	}
+	
+	/**
+	 * Square a number.
+	 * 
+	 * @param n
+	 * @return n squared.
+	 */
+	public static long square(long n)
+	{
+		return n * n;
+	}
 }
