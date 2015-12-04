@@ -15,7 +15,7 @@ public abstract class Problem
 	
 	public static void main(String[] args)
 	{
-		Problem problem = new Problem6();
+		Problem problem = new Problem8();
 		problem.solve();
 	}
 }

@@ -72,7 +72,12 @@ public class MathUtil
 	 * @return True if the n is prime, false if otherwise.
 	 */
 	public static boolean isPrime(long n)
-	{					
+	{		
+		if (n < 2)
+		{
+			return false;
+		}
+		
 		if (n > 3)
 		{
 			if (n % 2 == 0)
@@ -80,7 +85,7 @@ public class MathUtil
 				return false;
 			}
 			
-			for (long i = 3; i < (long) Math.sqrt(n); i += 2)
+			for (long i = 3; i <= (long) Math.sqrt(n); i += 2)
 			{
 				if (n % i == 0)
 				{
