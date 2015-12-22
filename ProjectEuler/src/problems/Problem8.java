@@ -55,6 +55,38 @@ public class Problem8 extends Problem
 	
 	protected void solve() 
 	{
+		int[] numbers = new int[number.length()];
+		
+		for (int i = 0; i < numbers.length; i++)
+		{
+			numbers[i] = Integer.parseInt(Character.toString(number.charAt(i)));
+		}
+		
+		long greatestProduct = 0;
+		
+		for (int i = 0; i < numbers.length - 12; i++)
+		{
+			long tempProduct = 1;
+			
+			for (int j = i; j < i + 13; j++)
+			{
+				if (numbers[j] == 0)
+				{
+					break;
+				}
+				
+				tempProduct *= numbers[j];
+			}
+			
+			if (tempProduct > greatestProduct)
+			{
+				greatestProduct = tempProduct;
+			}
+		}
+		
+		System.out.println("Greatest product is " + greatestProduct);
+		
+		/*
 		int[][] numbers = new int[20][50];
 		int count = 0;
 		
@@ -67,9 +99,25 @@ public class Problem8 extends Problem
 				count++;
 			}
 		}
-		
+
 		System.out.println("Highest horizontal product is " + calculateHighestHorizontalProduct(numbers));
+		long greatestProduct = calculateHighestHorizontalProduct(numbers);
 		System.out.println("Highest vertical product is " + calculateHighestVerticalProduct(numbers));
+		if (calculateHighestVerticalProduct(numbers) > greatestProduct)
+		{
+			greatestProduct = calculateHighestVerticalProduct(numbers);
+		}
+		System.out.println("Highest diagonal forward product is " + calculateHighestDiagonalForwardProduct(numbers));
+		if (calculateHighestDiagonalForwardProduct(numbers) > greatestProduct)
+		{
+			greatestProduct = calculateHighestDiagonalForwardProduct(numbers);
+		}
+		System.out.println("Highest diagonal backward product is " + calculateHighestDiagonalBackwardProduct(numbers));
+		if (calculateHighestDiagonalBackwardProduct(numbers) > greatestProduct)
+		{
+			greatestProduct =  calculateHighestDiagonalBackwardProduct(numbers);
+		}
+		System.out.println("Greatest product is " + greatestProduct);*/
 	}
 	
 	private long calculateHighestHorizontalProduct(int[][] numbers)
@@ -126,28 +174,24 @@ public class Problem8 extends Problem
 	{
 		long product = 0;
 		
-		for (int i = 0; i < 37; i++)
+		for (int i = 0; i <= 7; i++)
 		{
-			for (int j = 0; j <= 7; j++)
+			for (int j = 0; j <= 37; j++)
 			{
-				long tempProduct = 1;
-				
-				for (int k = j; k < j + 13; k++)
-				{
-					tempProduct *= numbers[j][i];
-					tempProduct *= numbers[j][i + 1];
-					tempProduct *= numbers[j][i + 2];
-					tempProduct *= numbers[j][i + 3];
-					tempProduct *= numbers[j][i + 4];
-					tempProduct *= numbers[j][i + 5];
-					tempProduct *= numbers[j][i + 6];
-					tempProduct *= numbers[j][i + 7];
-					tempProduct *= numbers[j][i + 8];
-					tempProduct *= numbers[j][i + 9];
-					tempProduct *= numbers[j][i + 10];
-					tempProduct *= numbers[j][i + 11];
-					tempProduct *= numbers[j][i + 12];
-				}
+				long tempProduct = 1;				
+				tempProduct *= numbers[i][j];
+				tempProduct *= numbers[i + 1][j + 1];
+				tempProduct *= numbers[i + 2][j + 2];
+				tempProduct *= numbers[i + 3][j + 3];
+				tempProduct *= numbers[i + 4][j + 4];
+				tempProduct *= numbers[i + 5][j + 5];
+				tempProduct *= numbers[i + 6][j + 6];
+				tempProduct *= numbers[i + 7][j + 7];
+				tempProduct *= numbers[i + 8][j + 8];
+				tempProduct *= numbers[i + 9][j + 9];
+				tempProduct *= numbers[i + 10][j + 10];
+				tempProduct *= numbers[i + 11][j + 11];
+				tempProduct *= numbers[i + 12][j + 12];
 				
 				if (tempProduct > product)
 				{
@@ -159,9 +203,35 @@ public class Problem8 extends Problem
 		return product;
 	}
 	
-	private long calculateDiagonalBackward()
+	private long calculateHighestDiagonalBackwardProduct(int[][] numbers)
 	{
 		long product = 0;
+		
+		for (int i = 0; i <= 7; i++)
+		{
+			for (int j = 12; j <= 49; j++)
+			{
+				long tempProduct = 1;				
+				tempProduct *= numbers[i][j];
+				tempProduct *= numbers[i + 1][j - 1];
+				tempProduct *= numbers[i + 2][j - 2];
+				tempProduct *= numbers[i + 3][j - 3];
+				tempProduct *= numbers[i + 4][j - 4];
+				tempProduct *= numbers[i + 5][j - 5];
+				tempProduct *= numbers[i + 6][j - 6];
+				tempProduct *= numbers[i + 7][j - 7];
+				tempProduct *= numbers[i + 8][j - 8];
+				tempProduct *= numbers[i + 9][j - 9];
+				tempProduct *= numbers[i + 10][j - 10];
+				tempProduct *= numbers[i + 11][j - 11];
+				tempProduct *= numbers[i + 12][j - 12];
+				
+				if (tempProduct > product)
+				{
+					product = tempProduct;
+				}
+			}
+		}
 		
 		return product;
 	}
